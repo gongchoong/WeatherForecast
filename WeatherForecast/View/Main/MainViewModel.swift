@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 class MainViewModel: ObservableObject {
     private var cancellables: [AnyCancellable] = []
@@ -14,6 +15,7 @@ class MainViewModel: ObservableObject {
     private let onAppearSubject = PassthroughSubject<Void, Error>()
     
     @Published var cityWithForecasts: [CityWithForecasts] = []
+    var isFahrenheit = true
     
     init(apiService: ApiServiceProtocol = ApiService()) {
         self.apiService = apiService
@@ -38,7 +40,7 @@ class MainViewModel: ObservableObject {
             let cityForecastPublishers = cities.map { [unowned self] city in
                 self.fetchWeather(city: city)
                     .flatMap { [unowned self] weather in
-                        self.fetchHourlyForecast(weather: weather)
+                        return self.fetchHourlyForecast(weather: weather)
                     }.map { forecasts in
                         CityWithForecasts(city: city, forecasts: forecasts)
                     }
@@ -78,6 +80,32 @@ class MainViewModel: ObservableObject {
         } catch let error {
             return Fail(error: error).eraseToAnyPublisher()
         }
+    }
+    
+    func convert() {
+        for index in self.cityWithForecasts.indices {
+            for periodIndex in self.cityWithForecasts[index].forecasts.properties.periods.indices {
+                let temperature = self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature
+                if isFahrenheit {
+                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature = toCelsius(fahrenheit: temperature)
+                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperatureUnit = ""
+                } else {
+                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature = toFahrenheit(celsius: temperature)
+                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperatureUnit = "F"
+                }
+            }
+        }
+        isFahrenheit = !isFahrenheit
+    }
+    
+    private func toFahrenheit(celsius: Int) -> Int {
+        let fahrenheit = Float(celsius) * 9/5 + 32
+        return Int(fahrenheit.rounded())
+    }
+    
+    private func toCelsius(fahrenheit: Int) -> Int {
+        let celsius = Float(fahrenheit - 32) * 5/9
+        return Int(celsius.rounded())
     }
 }
 

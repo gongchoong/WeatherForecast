@@ -14,8 +14,17 @@ struct MainView: View {
         NavigationView {
             List(mainViewModel.cityWithForecasts, rowContent: { cityWithForecasts in
                 CityView(cityWithForecasts: cityWithForecasts)
+                    .frame(height: 100)
             })
             .navigationTitle(Constants.title)
+            .toolbar {
+                Button {
+                    mainViewModel.convert()
+                } label: {
+                    mainViewModel.isFahrenheit ? Text("\u{00B0}C") : Text("\u{2109}")
+                }
+                .padding(.trailing)
+            }
         }
         .onAppear(perform: { mainViewModel.fetch() })
     }

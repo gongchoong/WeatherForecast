@@ -8,7 +8,7 @@
 import Foundation
 
 struct Constants {
-    static let title = "Weather"
+    static let title = "Today's Weather"
     static let weatherURL = "https://api.weather.gov/points/"
     static let cityJson = "cities"
 }

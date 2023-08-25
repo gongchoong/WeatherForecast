@@ -8,27 +8,27 @@
 import Foundation
 
 struct Weather: Decodable {
-    let properties: WeatherProperties
+    var properties: WeatherProperties
 }
 
 struct WeatherProperties: Decodable {
     let forecast: String
-    let forecastHourly: String
+    var forecastHourly: String
 }
 
 struct WeatherForecastHourly: Decodable {
-    let properties: HourlyProperties
+    var properties: HourlyProperties
 }
 
 struct HourlyProperties: Decodable {
-    let periods: [Period]
+    var periods: [Period]
 }
 
 struct Period: Decodable {
     let startTime: String
     let endTime: String
-    let temperature: Int
-    let temperatureUnit: String
+    var temperature: Int
+    var temperatureUnit: String
     let shortForecast: String
     let windSpeed: String
     let windDirection: String
@@ -44,5 +44,31 @@ struct Period: Decodable {
 
     var endDate: Date {
         return convertToDate(dateString: endTime)
+    }
+    
+    var weatherImageName: ImageName {
+        if shortForecast.contains(WeatherType.rainShowers.rawValue) {
+            return ImageName.rain
+        }
+        if shortForecast.contains(WeatherType.thunderstorms.rawValue) {
+            return ImageName.thunderstorms
+        }
+        if shortForecast.contains(WeatherType.sunny.rawValue) {
+            return ImageName.sunny
+        }
+        if shortForecast.contains(WeatherType.cloudy.rawValue) {
+            return ImageName.cloudy
+        }
+        if shortForecast.contains(WeatherType.clear.rawValue) {
+            return ImageName.sunny
+        }
+        if shortForecast.contains(WeatherType.fog.rawValue) {
+            return ImageName.fog
+        }
+        if shortForecast.contains(WeatherType.snow.rawValue) {
+            return ImageName.snow
+        }
+        
+        return ImageName.sunny
     }
 }

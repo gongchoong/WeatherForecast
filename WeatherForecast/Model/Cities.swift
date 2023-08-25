@@ -15,6 +15,7 @@ struct City: Decodable, Identifiable {
     let id: Int
     let name: String
     let location: Location
+    let UTC: Int
 }
 
 struct Location: Codable {
