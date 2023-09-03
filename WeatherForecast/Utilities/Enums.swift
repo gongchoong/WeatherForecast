@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeatherType: String {
+enum WeatherType: String, CaseIterable {
     case rainShowers = "Rain Showers"
     case thunderstorms = "Thunderstorms"
     case sunny = "Sunny"
@@ -15,13 +15,38 @@ enum WeatherType: String {
     case clear = "Clear"
     case fog = "Fog"
     case snow = "Snow"
+    
+    static func check(shortForecast: String) -> WeatherType {
+        return WeatherType.allCases.first { shortForecast.contains($0.rawValue) } ?? .sunny
+    }
+    
+    func imageName() -> String {
+        switch self {
+        case .rainShowers:
+            return ImageName.rain.rawValue
+        case .thunderstorms:
+            return ImageName.thunderstorms.rawValue
+        case .sunny:
+            return ImageName.sunny.rawValue
+        case .cloudy:
+            return ImageName.cloudy.rawValue
+        case .clear:
+            return ImageName.sunny.rawValue
+        case .fog:
+            return ImageName.fog.rawValue
+        case .snow:
+            return ImageName.snow.rawValue
+        }
+    }
 }
 
 enum ImageName: String {
-    case rain = "cloud.rain"
-    case thunderstorms = "cloud.bolt.rain"
-    case sunny = "sun.max"
-    case cloudy = "cloud"
-    case fog = "cloud.fog"
-    case snow = "cloud.snow"
+    case rain
+    case thunderstorms
+    case sunny
+    case cloudy
+    case fog
+    case snow
+    
+    
 }

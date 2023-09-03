@@ -26,7 +26,6 @@ class ApiService: ApiServiceProtocol {
                 return $0.data
             }
             .decode(type: T.RequestType.self, decoder: JSONDecoder())
-            .mapError { _ in ApiError.decodingError }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -39,7 +38,6 @@ class ApiService: ApiServiceProtocol {
                 return $0.data
             }
             .decode(type: T.RequestType.self, decoder: JSONDecoder())
-            .mapError { _ in ApiError.decodingError }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }

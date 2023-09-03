@@ -32,43 +32,9 @@ struct Period: Decodable {
     let shortForecast: String
     let windSpeed: String
     let windDirection: String
-    
-    func convertToDate(dateString: String) -> Date {
-        let dateFormatter = ISO8601DateFormatter()
-        return dateFormatter.date(from: dateString) ?? Date()
-    }
+    let relativeHumidity: RelativeHumidity
+}
 
-    var startDate: Date {
-        return convertToDate(dateString: startTime)
-    }
-
-    var endDate: Date {
-        return convertToDate(dateString: endTime)
-    }
-    
-    var weatherImageName: ImageName {
-        if shortForecast.contains(WeatherType.rainShowers.rawValue) {
-            return ImageName.rain
-        }
-        if shortForecast.contains(WeatherType.thunderstorms.rawValue) {
-            return ImageName.thunderstorms
-        }
-        if shortForecast.contains(WeatherType.sunny.rawValue) {
-            return ImageName.sunny
-        }
-        if shortForecast.contains(WeatherType.cloudy.rawValue) {
-            return ImageName.cloudy
-        }
-        if shortForecast.contains(WeatherType.clear.rawValue) {
-            return ImageName.sunny
-        }
-        if shortForecast.contains(WeatherType.fog.rawValue) {
-            return ImageName.fog
-        }
-        if shortForecast.contains(WeatherType.snow.rawValue) {
-            return ImageName.snow
-        }
-        
-        return ImageName.sunny
-    }
+struct RelativeHumidity: Decodable {
+    let value: Int
 }

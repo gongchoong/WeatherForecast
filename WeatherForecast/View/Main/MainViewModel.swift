@@ -32,31 +32,40 @@ class MainViewModel: ObservableObject {
             return
         }
         
-        onAppearSubject.flatMap { _ -> AnyPublisher<Cities, Error> in
-            return self.apiService.requestForPath(request: CityRequest(url: URL(filePath: path)))
-        }
-        .map { $0.cities }
-        .flatMap { cities -> AnyPublisher<[CityWithForecasts], Error> in
-            let cityForecastPublishers = cities.map { [unowned self] city in
-                self.fetchWeather(city: city)
-                    .flatMap { [unowned self] weather in
-                        return self.fetchHourlyForecast(weather: weather)
-                    }.map { forecasts in
-                        CityWithForecasts(city: city, forecasts: forecasts)
-                    }
+        onAppearSubject
+            .flatMap { _ -> AnyPublisher<Cities, Error> in
+                return self.apiService.requestForPath(request: CityRequest(url: URL(filePath: path)))
             }
-            return Publishers.MergeMany(cityForecastPublishers).collect().eraseToAnyPublisher()
-        }
-        .sink(receiveCompletion: { result in
-            switch result {
-            case .finished:
-                break
-            case .failure(let error):
-                print(error)
+            .map { $0.cities }
+            .flatMap { cities -> AnyPublisher<[CityWithForecasts], Error> in
+                let cityForecastPublishers = cities.map { [unowned self] city in
+                    return self.fetchWeather(city: city)
+                        .flatMap { [unowned self] weather in
+                            return self.fetchHourlyForecast(weather: weather)
+                        }.map { forecasts in
+                            return CityWithForecasts(city: city, weatherForecastHourly: forecasts)
+                        }.catch { error -> AnyPublisher<CityWithForecasts, Error> in
+                            return Empty()
+                                .setFailureType(to: Error.self)
+                                .eraseToAnyPublisher()
+                        }
+                }
+                return Publishers
+                    .MergeMany(cityForecastPublishers)
+                    .collect()
+                    .eraseToAnyPublisher()
             }
-        }, receiveValue: { cityWithForecasts in
-            self.cityWithForecasts = cityWithForecasts
-        }).store(in: &cancellables)
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            }, receiveValue: { cityWithForecasts in
+
+                self.cityWithForecasts = cityWithForecasts
+            }).store(in: &cancellables)
     }
     
     private func fetchWeather(city: City) -> AnyPublisher<Weather, Error> {
@@ -84,14 +93,14 @@ class MainViewModel: ObservableObject {
     
     func convert() {
         for index in self.cityWithForecasts.indices {
-            for periodIndex in self.cityWithForecasts[index].forecasts.properties.periods.indices {
-                let temperature = self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature
+            for periodIndex in self.cityWithForecasts[index].weatherForecastHourly.properties.periods.indices {
+                let temperature = self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature
                 if isFahrenheit {
-                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature = toCelsius(fahrenheit: temperature)
-                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperatureUnit = ""
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature = toCelsius(fahrenheit: temperature)
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = ""
                 } else {
-                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperature = toFahrenheit(celsius: temperature)
-                    self.cityWithForecasts[index].forecasts.properties.periods[periodIndex].temperatureUnit = "F"
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature = toFahrenheit(celsius: temperature)
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = "F"
                 }
             }
         }

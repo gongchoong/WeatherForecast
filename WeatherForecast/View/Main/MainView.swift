@@ -13,8 +13,9 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             List(mainViewModel.cityWithForecasts, rowContent: { cityWithForecasts in
-                CityView(cityWithForecasts: cityWithForecasts)
+                WeatherView(cityWithForecasts: cityWithForecasts)
                     .frame(height: 100)
+                    .listRowBackground(Color.clear)
             })
             .navigationTitle(Constants.title)
             .toolbar {
