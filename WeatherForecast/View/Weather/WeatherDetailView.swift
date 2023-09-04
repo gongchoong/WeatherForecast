@@ -21,13 +21,12 @@ struct WeatherDetailView: View {
         VStack {
             Text(self.weatherDetailViewModel.city?.name ?? "")
                 .font(.custom("MavenPro-SemiBold", size: 40))
-            Spacer()
             Image(self.weatherDetailViewModel.imageName ?? "")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 200)
             Text(self.weatherDetailViewModel.shortForecast ?? "")
                 .font(.custom("MavenPro-SemiBold", size: 20))
+                .lineLimit(2)
                 .padding([.leading, .trailing, .bottom])
             WeatherDetailInfoView(windSpeed: self.weatherDetailViewModel.windSpeed ?? "",
                                   temperature: self.weatherDetailViewModel.temperature ?? 0,
@@ -35,6 +34,7 @@ struct WeatherDetailView: View {
                                   temperatureUnit: self.weatherDetailViewModel.temperatureUnit ?? "")
             .padding([.leading, .trailing])
             WeatherDailyView(cityWithForecast: cityWithForecasts)
+                .frame(height: 280)
                 .padding([.leading, .trailing, .bottom])
         }
         .onAppear {

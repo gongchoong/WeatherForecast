@@ -35,7 +35,7 @@ struct WeatherDailyView: View {
                     Spacer()
                     Text(self.weatherDailyViewModel.getDate(index: self.index))
                         .foregroundColor(.white)
-                        .font(.custom("MavenPro-SemiBold", size: 18))
+                        .font(.custom("MavenPro-Bold", size: 22))
                     Spacer()
                     Button {
                         increment()
@@ -78,26 +78,25 @@ struct WeatherHourlyView: View {
         ZStack {
             Rectangle()
                 .cornerRadius(30)
-                .frame(width: 80)
+                .frame(width: 90)
             VStack {
                 VStack {
                     Image(imageName)
                         .resizable()
                         .scaledToFill()
                         .offset(y: 5)
-                        .frame(width: 60, height: 60)
+                        .frame(width: 50, height: 50)
                         .padding(.bottom)
+                    Text("\(temperature)\u{00B0}\(temperatureUnit)")
+                        .foregroundColor(.white)
+                        .font(.custom("MavenPro-Bold", size: 16))
                     Text(time)
                         .foregroundColor(.white)
                         .font(.custom("MavenPro-SemiBold", size: 14))
-                    Text("\(temperature)\u{00B0}\(temperatureUnit)")
-                        .foregroundColor(.white)
-                        .font(.custom("MavenPro-SemiBold", size: 14))
                 }
-                Spacer()
             }
         }
         .foregroundColor(.black)
-        .padding([.leading])
+        .padding(.leading, 5)
     }
 }
