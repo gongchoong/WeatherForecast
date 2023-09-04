@@ -11,4 +11,6 @@ struct Constants {
     static let title = "Today's Weather"
     static let weatherURL = "https://api.weather.gov/points/"
     static let cityJson = "cities"
+    static let fahrenheit = "F"
+    static let celcius = ""
 }

@@ -16,10 +16,6 @@ struct CityWithForecasts: Identifiable {
         self.weatherForecastHourly = weatherForecastHourly
     }
     
-    var currentWeather: Period? {
-        return weatherForecastHourly.properties.periods.first
-    }
-    
     var id: Int {
         city.id
     }

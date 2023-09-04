@@ -97,10 +97,10 @@ class MainViewModel: ObservableObject {
                 let temperature = self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature
                 if isFahrenheit {
                     self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature = toCelsius(fahrenheit: temperature)
-                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = ""
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = Constants.celcius
                 } else {
                     self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperature = toFahrenheit(celsius: temperature)
-                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = "F"
+                    self.cityWithForecasts[index].weatherForecastHourly.properties.periods[periodIndex].temperatureUnit = Constants.fahrenheit
                 }
             }
         }
